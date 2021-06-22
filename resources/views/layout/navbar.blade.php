@@ -11,6 +11,9 @@
             <li class="nav-item {{ request()->routeIs('images') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('images') }}">Images</a>
             </li>
+            <li class="nav-item {{ request()->routeIs('graphs') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('graphs') }}">@lang('Graphs')</a>
+            </li>
         </ul>
     </div>
 </nav>
