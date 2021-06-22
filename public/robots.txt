@@ -1,0 +1,14 @@
+User-agent: *
+Disallow: /
+
+User-agent: OhDear
+Disallow:
+
+User-agent: Sitealarm
+Disallow:
+
+User-agent: Zhylon
+Disallow:
+
+User-agent: Nemo
+Disallow:
