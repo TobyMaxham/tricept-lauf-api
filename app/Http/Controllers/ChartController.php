@@ -69,7 +69,11 @@ class ChartController extends Controller
 
     private function getRankingData(int $subDays = 0)
     {
-        return collect($this->client->getRanking(false, $subDays));
+        if(0 == $subDays) {
+            return collect($this->client->getRanking(false, $subDays));
+        }
+
+        return collect($this->client->getRankingForDay(now()->subDays($subDays)));
     }
 
 }
