@@ -1,0 +1,33 @@
+config:
+  application: 'Tricept On Tour'
+  repository: '$self'
+  branch: main
+  php_fpm_version: '8.0'
+  php_cli_version: '8.0'
+
+cron:
+  scheduler:
+    type: laravel
+    frequency: every-minute
+    task: schedule:run
+
+hosts:
+  prod:
+    remote_user: zhylon
+    env: prod
+    debug: false
+    automation: false
+    hostname: 'lauftreff.awesomeapp.de'
+    deploy_path: '~/{{hostname}}'
+
+tasks:
+  deploy:
+    - artisan:view:cache
+    - artisan:config:cache
+    - artisan:migrate
+    - npm:install
+    - npm:run:prod
+    - php-fpm:reload
+  npm:run:prod:
+    script:
+      - 'cd {{release_or_current_path}} && npm run prod'
