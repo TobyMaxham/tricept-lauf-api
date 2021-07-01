@@ -42,7 +42,7 @@ class FetchResultsCommand extends Command
             return 1;
         }
 
-        //$this->fetchAllForDay();
+        $this->fetchAllForDay();
 
         $this->client->getRanking(true);
 

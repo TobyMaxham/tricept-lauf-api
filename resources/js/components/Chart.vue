@@ -12,7 +12,7 @@ export default {
         return {
             chartOptions: {
                 title: {
-                  text: 'Daily Rank Chart',
+                    text: 'Daily Rank Chart',
                 },
                 yAxis: {
                     title: {
@@ -22,13 +22,23 @@ export default {
                 xAxis: {
                     categories: []
                 },
-                series: [
-                ]
+                series: []
             }
         };
     },
     mounted() {
-        this.chartOptions.series = this.collection;
+        let i = 1;
+        this.chartOptions.series = this.collection
+            .sort(function (a, b) {
+                return a.steps < b.steps;
+            })
+            .map(function (col) {
+                if (i > 7) {
+                    col.visible = false;
+                }
+                i++;
+                return col;
+            });
         this.chartOptions.xAxis.categories = this.days;
     }
 
