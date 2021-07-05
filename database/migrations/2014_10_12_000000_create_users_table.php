@@ -17,7 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('username');
-            $table->string('app_token');
+            $table->text('app_token')->nullable();
             $table->timestamp('token_created')->nullable();
             //$table->string('email')->unique();
             //$table->timestamp('email_verified_at')->nullable();
