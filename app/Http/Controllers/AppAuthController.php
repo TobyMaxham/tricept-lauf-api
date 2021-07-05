@@ -31,7 +31,7 @@ class AppAuthController
     {
         $request->validate([
             'username' => 'required',
-            'password' => 'required|confirmed',
+            'password' => 'required',
         ]);
 
 
