@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', [RankingController::class, 'index'])->name('ranking');
-    Route::get('/images', [ImageController::class, 'index'])->name('images');
+    Route::get('/tour-images', [ImageController::class, 'index'])->name('images');
     Route::get('/results', [RankingController::class, 'results'])->name('results');
     Route::get('/graphs', [ChartController::class, 'index'])->name('graphs');
 });
