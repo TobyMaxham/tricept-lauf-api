@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -15,21 +16,46 @@ class LaufClient
     public function __construct()
     {
         $this->base = config('lauf.api_baseurl');
-        throw_if(null == $this->base, 'No Base URL is set');
     }
 
     public function getToken()
     {
-        $data = $this->http(false)->post($this->url('/appautho/api/v1/appauth'), [
-            'username' => config('lauf.api_user'),
-            'password' => config('lauf.api_password'),
-        ])->object();
+        $data = $this->doLogin(config('lauf.api_user'), config('lauf.api_password'));
 
         if (!isset($data->data) || $data->meta->state != 200) {
             throw new \Exception('Invalid Login');
         }
 
         return $data->data;
+    }
+
+    public function doLogin(string $username, string $password)
+    {
+        return $this->http(false)->post($this->url('/appautho/api/v1/appauth'), [
+            'username' => $username,
+            'password' => $password,
+        ])->object();
+    }
+
+    public function getProfile($token)
+    {
+        return $this->http2($token)
+            ->get($this->url('/steps/api/v1/profile/my'), [
+                'type' => config('lauf.api_type_param'),
+            ])
+            ->object();
+    }
+
+    public function postSteps(int $steps, Carbon $time, $token)
+    {
+        return $this->http2($token)
+            ->post($this->url('/steps/api/v1/run/new').'?type='.config('lauf.api_type_param'), [
+                'distance' => $steps * config('lauf.step_cm') / 100000,
+                'runningTime' => 1,
+                'verified' => 0,
+                'startTime' => $time->timestamp,
+                'stepCount' => $steps,
+            ])->object();
     }
 
     protected function http(bool $withAuth = true): PendingRequest
@@ -41,6 +67,16 @@ class LaufClient
         if ($withAuth) {
             $header['Authorization'] = 'Bearer '.$this->getTokenCache();
         }
+
+        return Http::withHeaders($header);
+    }
+
+    protected function http2(string $token): PendingRequest
+    {
+        $header = [
+            'api-token' => config('lauf.api_key'),
+        ];
+        $header['Authorization'] = 'Bearer '.$token;
 
         return Http::withHeaders($header);
     }
@@ -99,6 +135,20 @@ class LaufClient
         return json_decode(Storage::get($file));
     }
 
+    public function getAllTimeRanking(): Collection
+    {
+        $start = Carbon::parse(config('lauf.start_date'));
+
+        $allTimeData = collect();
+        while ($start->diffInDays(now(), false) > 1) {
+            $data = $this->getRankingForDay($start);
+            $start->addDay();
+            $allTimeData->put($start->format('ymd'), $data);
+        }
+
+        return $allTimeData;
+    }
+
     public function getRankingForDay(Carbon $day, bool $foreCreate = false)
     {
         $day = $day->clone();
@@ -131,6 +181,7 @@ class LaufClient
 
     private function url(string $url): string
     {
+        throw_if(null == $this->base, 'No Base URL is set');
         return $this->base.$url;
     }
 

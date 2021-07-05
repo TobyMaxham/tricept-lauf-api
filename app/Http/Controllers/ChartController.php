@@ -14,9 +14,6 @@ class ChartController extends Controller
 
     public function __construct()
     {
-        // Set a single value by dot notation key.
-
-
         $this->client = new LaufClient();
     }
 
@@ -29,8 +26,8 @@ class ChartController extends Controller
 
     private function getDays()
     {
-        $diffDays = Carbon::parse('2021-05-27')->diffInDays(today());
-        $day = Carbon::parse('2021-05-27');
+        $diffDays = Carbon::parse(config('lauf.start_date'))->diffInDays(today());
+        $day = Carbon::parse(config('lauf.start_date'));
         $days = collect();
         for ($i = $diffDays; $i > 0; $i--) {
             $days->push($day->addDay( 1)->format('Y-m-d'));
@@ -41,7 +38,7 @@ class ChartController extends Controller
 
     private function getGraphData()
     {
-        $diffDays = Carbon::parse('2021-05-27')->diffInDays(today());
+        $diffDays = Carbon::parse(config('lauf.start_date'))->diffInDays(today());
         $data = $this->getRankingData()->map(function ($entry) {
             return (object)[
                 'id' => $entry->id,

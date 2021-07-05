@@ -8,12 +8,22 @@
             <li class="nav-item {{ request()->routeIs('ranking') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('ranking') }}">Ranking</a>
             </li>
-            <li class="nav-item {{ request()->routeIs('images') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('images') }}">Images</a>
-            </li>
             <li class="nav-item {{ request()->routeIs('graphs') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('graphs') }}">@lang('Graphs')</a>
             </li>
+            @auth()
+                <li class="nav-item {{ request()->routeIs('images') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('images') }}">Images</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('logout') }}">Logout</a>
+                </li>
+            @endauth
         </ul>
     </div>
+    @auth()
+        Hello, {{ auth()->user()->name }}
+    @else
+        <a href="{{ route('login') }}">Login</a>
+    @endauth
 </nav>

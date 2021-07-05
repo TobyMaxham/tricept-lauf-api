@@ -6,6 +6,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -40,4 +42,18 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public static function createFromApp(string $username, string $password, string $profile, string $token)
+    {
+        $user = new self();
+        $user->name = $profile;
+        $user->username = $username;
+        $user->password = Hash::make($password);
+        $user->app_token = $token;
+        $user->token_created = Carbon::now();
+        $user->save();
+        $user->refresh();
+
+        return $user;
+    }
 }

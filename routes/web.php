@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppAuthController;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RankingController;
@@ -21,3 +22,8 @@ Route::get('/images', [ImageController::class, 'index'])->name('images');
 
 Route::get('/results', [RankingController::class, 'results'])->name('results');
 Route::get('/graphs', [ChartController::class, 'index'])->name('graphs');
+
+
+Route::get('/login', [AppAuthController::class, 'getLogin'])->name('login');
+Route::get('/logout', [AppAuthController::class, 'getLogout'])->name('logout');
+Route::post('/login', [AppAuthController::class, 'postLogin']);

@@ -13,7 +13,7 @@ class FetchResultsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'lauf:fetch-ranking';
+    protected $signature = 'lauf:fetch-ranking {--today}';
 
     /**
      * The console command description.
@@ -42,6 +42,10 @@ class FetchResultsCommand extends Command
             return 1;
         }
 
+        if($this->option('today')) {
+            return $this->onlyForToday();
+        }
+
         $this->fetchAllForDay();
 
         $this->client->getRanking(true);
@@ -51,13 +55,19 @@ class FetchResultsCommand extends Command
 
     private function fetchAllForDay()
     {
-        // Start
-        $start = Carbon::parse('2021-05-27');
+        $start = Carbon::parse(config('lauf.start_date'));
 
         while ($start->diffInDays(now(), false) > 1) {
             $this->client->getRankingForDay($start, true);
             $start->addDay();
             $this->line('Fetched for: '.$start->format('Y-m-d'));
         }
+    }
+
+    private function onlyForToday()
+    {
+        $this->client->getRankingForDay(now(), true);
+
+        return 0;
     }
 }

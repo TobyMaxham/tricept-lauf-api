@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('lauf:fetch-ranking')->dailyAt('23:00');
+        $schedule->command('lauf:fetch-ranking --today')->hourly();
     }
 
     /**
